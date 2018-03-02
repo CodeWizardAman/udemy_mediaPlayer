@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,6 +19,15 @@ public class MainActivity extends AppCompatActivity {
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.aashiq);
+
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                int duration = mp.getDuration();
+                String mDuration = String.valueOf(duration/1000);
+                Toast.makeText(getApplicationContext(), "duration "+mDuration, Toast.LENGTH_LONG).show();
+            }
+        });
 
         controlButton = (Button) findViewById(R.id.play_btn_id);
 
@@ -44,5 +54,17 @@ public class MainActivity extends AppCompatActivity {
     private void play(){
         mediaPlayer.start();
         controlButton.setText("Pause");
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        if(mediaPlayer != null && mediaPlayer.isPlaying()){
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+
+        super.onDestroy();
     }
 }
